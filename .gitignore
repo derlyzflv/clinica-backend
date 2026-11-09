@@ -1,5 +1,12 @@
+# dependencies
+node_modules/
+# Prisma 7 specific
+.env
 *.sql
 *.md
 *.ma
-
-node_modules/
+/generated/prisma
+# AgentsIA
+.agents
+.claude
+.windsurf
