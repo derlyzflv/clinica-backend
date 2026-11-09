@@ -1,0 +1,5 @@
+*.sql
+*.md
+*.ma
+
+node_modules/
