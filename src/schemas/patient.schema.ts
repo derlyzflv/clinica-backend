@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+/* 
 export const createPatientSchema = z.object({
   first_name: z
     .string({ message: "El nombre es obligatorio" })
@@ -33,6 +34,28 @@ export const createPatientSchema = z.object({
       }
     ),
 });
+*/
+export const createPatientSchema = z.object({
+  first_name: z
+    .string("El nombre es obligatorio")
+    .min(1, "El nombre no puede estar vacío")
+    .max(100, "El nombre no puede superar los 100 caracteres"),
+  last_name: z
+    .string("El apellido es obligatorio")
+    .min(1, "El apellido no puede estar vacío")
+    .max(100, "El apellido no puede superar los 100 caracteres"),
+  email: z
+    .string("El email es obligatorio")
+    .trim()
+    .email("El correo no tiene un formato válido")
+    .max(255, "El email no puede superar los 100 caracteres"),
+  birth_date: z
+    .coerce
+    .date({ message: "La fecha de nacimiento no tiene un formato válido" })
+    .max(new Date(), 'La fecha de nacimiento no puede ser futura')
+});
+
+export const updatePatientSchema = createPatientSchema.partial();
 
 export type CreatePatientInput = z.infer<typeof createPatientSchema>;
 
