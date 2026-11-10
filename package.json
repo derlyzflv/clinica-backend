@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "tsx watch src/script.ts",
+    "start": "tsx src/script.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

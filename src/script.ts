@@ -1,3 +1,4 @@
+// pnpm tsx src/script.ts
 import { prisma } from "./lib/prisma.js";
 
 async function main() {
