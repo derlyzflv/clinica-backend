@@ -5,12 +5,15 @@ import { Router } from "express";
 import { validateCreatePatient, validateUpdatePatient } from "../middlewares/validate-patient.js";
 import { createPatient, getPatientById, getAllPatients } from "../controllers/patient.controllers.js";
 
+import { verifyToken } from "../middlewares/auth.middleware.js";
+import { authorize } from "../middlewares/authorize.middleware.js";
+
 const router: Router = Router();
 
 // authorize('RECEPCIONISTA')
-router.get('/', getAllPatients)
-router.post('/', validateCreatePatient, createPatient)
-router.get('/:id', getPatientById)
+router.get('/', verifyToken, authorize('RECEPCIONISTA'), getAllPatients)
+router.post('/', verifyToken, authorize('RECEPCIONISTA'), validateCreatePatient, createPatient)
+router.get('/:id', verifyToken, authorize('RECEPCIONISTA'), getPatientById)
 
 export default router;
 

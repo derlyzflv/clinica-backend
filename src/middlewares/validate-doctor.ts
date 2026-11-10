@@ -3,3 +3,4 @@ import { createDoctorSchema, updateDoctorSchema, getDoctorsQuerySchema } from ".
 
 export const validateCreateDoctor = validateSchema(createDoctorSchema);
 export const validateUpdateDoctor = validateSchema(updateDoctorSchema);
+export const validateGetDoctorsQuery = validateSchema(getDoctorsQuerySchema, "query");

@@ -1,8 +1,10 @@
 // pnpm tsx prisma/seed.ts
+import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/prisma.js";
 
 async function main() {
   console.log("🌱 Iniciando seed de Clínica Salud Integral...");
+  const hashedPassword = await bcrypt.hash("password123", 10);
 
   // Limpieza previa respetando el orden de las llaves foráneas (ON DELETE RESTRICT)
   await prisma.appointments.deleteMany();
@@ -66,7 +68,7 @@ async function main() {
       data: {
         name: doc.name,
         email: doc.email,
-        password: "password123",
+        password: hashedPassword,
         role: "MEDICO",
       },
     });
@@ -86,13 +88,13 @@ async function main() {
       {
         name: "Ana Recepción",
         email: "recepcion@clinicasalud.com",
-        password: "password123",
+        password: hashedPassword,
         role: "RECEPCIONISTA",
       },
       {
         name: "Director General",
         email: "gerencia@clinicasalud.com",
-        password: "password123",
+        password: hashedPassword,
         role: "GERENCIA",
       },
     ],

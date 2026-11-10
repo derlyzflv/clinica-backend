@@ -4,23 +4,13 @@
 
 import { Router } from "express";
 import { getAllDoctors, createDoctor } from "../controllers/doctor.controllers";
-import { getDoctorsQuerySchema } from "../schemas/doctor.schema";
-import { validateSchema } from "../middlewares/validateSchema";
-import { validateCreateDoctor } from "../middlewares/validate-doctor";
+import { validateCreateDoctor, validateGetDoctorsQuery } from "../middlewares/validate-doctor";
+import { verifyToken } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/authorize.middleware";
 
 const router: Router = Router();
 
-// MARTES: getAllDoctors
-// /api/doctors?specialty=Cardiología
-/*
-POST /api/patients con un correo mal formateado → 400
-POST /api/patients con birthDate en el futuro → 400
-POST /api/patients con datos válidos → 201
-GET /api/doctors sin filtro → todos los médicos con su especialidad
-GET /api/doctors?specialty=Pediatría → solo los médicos de esa especialidad
-*/
-
-router.get('/', validateSchema(getDoctorsQuerySchema, "query"), getAllDoctors);
+router.get('/', verifyToken, authorize('RECEPCIONISTA'), validateGetDoctorsQuery, getAllDoctors);
 
 router.post('/', validateCreateDoctor, createDoctor)
 
