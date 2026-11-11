@@ -55,7 +55,7 @@ export const createPatientSchema = z.object({
     .max(new Date(), 'La fecha de nacimiento no puede ser futura')
 });
 
-export const updatePatientSchema = createPatientSchema.partial();
+// export const updatePatientSchema = createPatientSchema.partial();
 
 export type CreatePatientInput = z.infer<typeof createPatientSchema>;
 

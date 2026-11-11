@@ -17,7 +17,18 @@ export const getDoctorsQuerySchema = z.object({
   specialty: z.string().optional(),
 });
 
+export const getDoctorAppointmentsQuerySchema = z.object({
+  from: z.coerce
+    .date({ message: "La fecha 'from' no tiene un formato válido (use YYYY-MM-DD)" })
+    .optional(),
+  to: z.coerce
+    .date({ message: "La fecha 'to' no tiene un formato válido (use YYYY-MM-DD)" })
+    .optional(),
+}).refine((datos) => datos.to! >= datos.from!, { message: "La fecha 'to' debe ser posterior o igual a la fecha 'from'", path: ["to"] });
+
 export type GetDoctorsQueryInput = z.infer<typeof getDoctorsQuerySchema>;
+
+export type GetDoctorAppointmentsQueryInput = z.infer<typeof getDoctorAppointmentsQuerySchema>;
 
 export const updateDoctorSchema = createDoctorSchema.partial();
 

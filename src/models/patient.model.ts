@@ -35,14 +35,18 @@ export const PatientModel = {
         return (
             await prisma.patients.findUnique({
                 where: { id },
-                include: {
+                select: {
+                    first_name: true,
+                    last_name: true,
                     appointments: {
-                        include: { doctors: { include: { specialties: true } } },
-                        orderBy: { appointment_date: 'desc' }
-                    }
-                }
+                        select: {
+                            id: true, appointment_date: true, appointment_time: true, status: true,
+                            doctors: { select: { users: { select: { name: true } } } }
+                        }
+                    },
+                },
             })
-        )
+        );
     },
 
     // GET /api/patients/:id

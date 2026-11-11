@@ -2,6 +2,39 @@ import { z } from "zod";
 
 export const createAppointmentSchema = z.object({
   patient_id: z
+    .number("el id debe ser un numero")
+    .int("el id debe ser un número entero")
+    .positive("el id debe ser positivo")
+    .min(1, "El ID del cliente debe ser mayor a 0"),
+  doctor_id: z
+    .number("el id debe ser un numero")
+    .int("el id debe ser un número entero")
+    .positive("el id debe ser positivo")
+    .min(1, "El ID del cliente debe ser mayor a 0"),
+  appointment_date: z
+    .coerce.date().min(new Date(), 'No puedes agendar una cita en una fecha que ya pasó'),
+  appointment_time: z
+    .string("La hora de la cita es obligatoria")
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Formato de hora inválido (use HH:MM, ej. 09:30)"),
+  reason: z
+    .string().optional()
+})
+
+export const appointmentStatusSchema = z.object({
+  status: z.enum(['COMPLETADA', 'CANCELADA'])
+})
+
+export type AppointmentStatusInput = z.infer<typeof appointmentStatusSchema>;
+
+export const updateAppointmentSchema = createAppointmentSchema.partial();
+
+// Extraer el tipo de dato para TypeScript desde el schema que creamos
+export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
+
+/* import { z } from "zod";
+
+export const createAppointmentSchema = z.object({
+  patient_id: z
     .number({ message: "El ID del paciente debe ser un número" })
     .int("El ID del paciente debe ser un número entero")
     .positive("El ID del paciente debe ser positivo"),
@@ -51,3 +84,4 @@ export const updateAppointmentStatusSchema = z.object({
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
 export type UpdateAppointmentStatusInput = z.infer<typeof updateAppointmentStatusSchema>;
 
+ */

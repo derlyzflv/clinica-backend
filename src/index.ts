@@ -9,6 +9,7 @@ import "dotenv/config";
 import authRoutes from "./routes/auth.routes";
 import patientRoutes from "./routes/patient.routes";
 import doctorRoutes from "./routes/doctor.routes";
+import appointmentRoutes from "./routes/appointment.routes";
 
 import swaggerUi from 'swagger-ui-express';
 
@@ -42,6 +43,11 @@ app.use("/api/doctors", doctorRoutes
             "bearerAuth": []
     }] */
 );
+app.use("/api/appointments", appointmentRoutes
+    /* #swagger.security = [{
+        "bearerAuth": []
+    }] */
+)
 
 
 const PORT = process.env.PORT || 3000;

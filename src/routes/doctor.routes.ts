@@ -4,15 +4,32 @@
 
 import { Router } from "express";
 import { getAllDoctors, createDoctor } from "../controllers/doctor.controllers";
-import { validateCreateDoctor, validateGetDoctorsQuery } from "../middlewares/validate-doctor";
+import { validateCreateDoctor, validateGetDoctorsQuery, validateGetDoctorAppointmentsQuery } from "../middlewares/validate-doctor";
 import { verifyToken } from "../middlewares/auth.middleware";
 import { authorize } from "../middlewares/authorize.middleware";
+import { getAppointmentsByDoctor } from "../controllers/doctor.controllers";
+
+import type { Request, Response } from "express";
+import { DoctorModel } from "../models/doctor.model";
 
 const router: Router = Router();
 
+router.get('/:id', verifyToken, authorize('RECEPCIONISTA'), async (req: Request, res: Response) => {
+    /*
+        #swagger.tags = ['Optional']
+        #swagger.summary = 'Obtener médico por ID'
+    */
+    const doctor_id = Number(req.params.id);
+    const doctor = await DoctorModel.findById(doctor_id);
+    res.status(200).json({ ok: true, data: doctor });
+});
 router.get('/', verifyToken, authorize('RECEPCIONISTA'), validateGetDoctorsQuery, getAllDoctors);
-
-router.post('/', validateCreateDoctor, createDoctor)
+// Método	Ruta	Descripción
+// GET	/api/doctors/:id/appointments?from=&to=
+// Agenda del médico, filtrable por rango de fechas — protegido con authorize('MEDICO')
+router.get('/:id/appointments', verifyToken, authorize('RECEPCIONISTA', 'MEDICO'), validateGetDoctorAppointmentsQuery, getAppointmentsByDoctor);
+// a criterio
+router.post('/', validateCreateDoctor, createDoctor);
 
 // router.get('/api/doctors/:id', (req: Request, res: Response) => {
 // const doctor = await prisma.curso.findUnique({ where: { id: 1 } });
@@ -25,7 +42,7 @@ orderBy: { precio: "asc" },
 
 export default router;
 
-/* 
+/* MARTES OK
 POST /api/patients con un correo mal formateado → 400
 POST /api/patients con birthDate en el futuro → 400
 POST /api/patients con datos válidos → 201

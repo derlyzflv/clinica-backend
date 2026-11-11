@@ -2,7 +2,7 @@
 “Módulo de Recepción” — alta de pacientes, búsqueda de médicos y consulta de expedientes las hace el recepcionista — así que authorize('RECEPCIONISTA') cubre todas las rutas que construiste el lunes y el martes. MEDICO y GERENCIA los vas a usar recién el jueves y el viernes, en las rutas nuevas de esos días.
 */
 import { Router } from "express";
-import { validateCreatePatient, validateUpdatePatient } from "../middlewares/validate-patient.js";
+import { validateCreatePatient } from "../middlewares/validate-patient.js";
 import { createPatient, getPatientById, getAllPatients } from "../controllers/patient.controllers.js";
 
 import { verifyToken } from "../middlewares/auth.middleware.js";
