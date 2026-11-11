@@ -2,11 +2,13 @@ import { type Request, type Response } from "express";
 import { DoctorModel } from "../models/doctor.model";
 import { getDoctorsQuerySchema, type GetDoctorsQueryInput, type GetDoctorAppointmentsQueryInput } from "../schemas/doctor.schema";
 import { AppointmentModel } from "../models/appointment.model";
+import { prisma } from "../config/prisma";
+import { id } from "zod/locales";
 
 export const getAllDoctors = async (req: Request<unknown, unknown, unknown, GetDoctorsQueryInput>, res: Response) => {
     /*
-        #swagger.tags = ['Doctors']
-        #swagger.summary = 'Listar todos los médicos o filtrar por especialidad'
+        #swagger.tags = ['Médicos']
+        #swagger.summary = '1.2. Búsqueda de especialistas'
         #swagger.description = 'Obtiene el directorio de médicos de la clínica incluyendo sus datos de usuario y especialidad.'
         #swagger.parameters['specialty'] = {
             in: 'query',
@@ -19,18 +21,12 @@ export const getAllDoctors = async (req: Request<unknown, unknown, unknown, GetD
             schema: {
                 ok: true,
                 data: [{
-                    id: 1,
-                    user_id: 2,
-                    specialty_id: 1,
-                    specialties: {
-                        id: 1,
-                        name: "Cardiología"
+                    "id": 9,
+                    "specialties": {
+                        "name": "Pediatría"
                     },
-                    users: {
-                        id: 2,
-                        name: "Dr. Carlos Mendoza",
-                        email: "carlos.mendoza@clinicasalud.com",
-                        role: "MEDICO"
+                    "users": {
+                        "name": "Dr. Roberto Gómez"
                     }
                 }]
             }
@@ -40,11 +36,11 @@ export const getAllDoctors = async (req: Request<unknown, unknown, unknown, GetD
         }
     */
     try {
-        const result = getDoctorsQuerySchema.safeParse(req.query);
-        if (!result.success) {
-            return res.status(400).json({ error: "Parámetros de consulta inválidos", detalles: result.error.issues });
-        }
-        const { specialty } = result.data;
+        // const result = getDoctorsQuerySchema.safeParse(req.query);
+        // if (!result.success) {
+        //     return res.status(400).json({ error: "Parámetros de consulta inválidos", detalles: result.error.issues });
+        // }
+        const specialty = req.query.specialty;
         const doctors = await DoctorModel.getAll(specialty);
         res.status(200).json({ ok: true, data: doctors });
     } catch (error: any) {
@@ -58,7 +54,7 @@ export const getAllDoctors = async (req: Request<unknown, unknown, unknown, GetD
 
 export const createDoctor = async (req: Request, res: Response) => {
     /*
-        #swagger.tags = ['Doctors']
+        #swagger.tags = ['Médicos']
         #swagger.summary = 'Registrar un nuevo médico'
         #swagger.description = 'Asocia un usuario existente con una especialidad médica en el directorio de doctores.'
         #swagger.requestBody = {
@@ -121,8 +117,8 @@ export type DoctorIdParam = { id: string };
 
 export const getAppointmentsByDoctor = async (req: Request<DoctorIdParam, unknown, unknown, GetDoctorAppointmentsQueryInput>, res: Response) => {
     /*
-        #swagger.tags = ['Doctors']
-        #swagger.summary = 'Obtener la agenda de citas de un médico por rango de fechas'
+        #swagger.tags = ['Médicos']
+        #swagger.summary = '2.2. Agenda del médico'
         #swagger.description = 'Lista las citas programadas para un médico específico, permitiendo filtrar opcionalmente entre dos fechas (from y to).'
         #swagger.parameters['id'] = {
             in: 'path',
@@ -141,6 +137,31 @@ export const getAppointmentsByDoctor = async (req: Request<DoctorIdParam, unknow
             description: 'Fecha de fin del filtro (YYYY-MM-DD)',
             required: false,
             type: 'string'
+        }
+        #swagger.responses[200] = {
+            description: 'Lista de médicos obtenida correctamente',
+            schema: {
+                ok: true,
+                data: {
+                    "doctors": {
+                        "users": {
+                            "name": "Dr. Carlos Mendoza"
+                        }
+                    },
+                    "appointments": [
+                        {
+                            "id": 1,
+                            "patients": {
+                                "first_name": "Carlos",
+                                "last_name": "Ramirez"
+                            },
+                            "appointment_date": "2026-11-12T00:00:00.000Z",
+                            "appointment_time": "1970-01-01T09:00:00.000Z",
+                            "status": "PROGRAMADA"
+                        }
+                    ]
+                }
+            }
         }
     */
     try {
@@ -165,6 +186,8 @@ export const getAppointmentsByDoctor = async (req: Request<DoctorIdParam, unknow
         // ? new Date(`${from.toISOString().slice(0, 10)}T00:00:00.000Z`)
         // : undefined;
         const toDate = from && to ? new Date(to) : undefined;
+
+        if (req.user!.id !== doctor.user_id) { return res.status(403).json({ error: "403 Forbidden" }) }
 
         const appointmentsByDoctor = await DoctorModel.getDoctorAgenda(doctor_id, fromDate, toDate);
         res.status(200).json(appointmentsByDoctor);

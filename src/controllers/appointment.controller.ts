@@ -3,11 +3,28 @@ import type { Request, Response } from "express";
 import { AppointmentModel } from "../models/appointment.model";
 import { PatientModel } from "../models/patient.model";
 import { DoctorModel } from "../models/doctor.model";
-import { Prisma } from "../lib/prisma";
+import { prisma, Prisma } from "../config/prisma";
 
 export const createAppointment = async (req: Request, res: Response) => {
     /*
         #swagger.tags = ['Appointments']
+        #swagger.summary = "2.1. Programación de citas"
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            patient_id: { type: "number", example: 1 },
+                            doctor_id: { type: "number", example: 2 },
+                            appointment_date: { type: "string", example: "2026-07-20" },
+                            appointment_time: { type: "string", example: "14:30" }
+                        }
+                    }
+                }
+            }
+        }
     */
     const { patient_id, doctor_id, appointment_date, appointment_time } = req.body
     const created_by = req.user!.id; // <-- Obtenido del usuario autenticado (JWT)
@@ -27,6 +44,20 @@ export const createAppointment = async (req: Request, res: Response) => {
 export const updateAppointmentStatus = async (req: Request, res: Response) => {
     /*
         #swagger.tags = ['Appointments']
+        #swagger.summary = "2.3. Gestión de estado"
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            status: { type: "string", example: "COMPLETADA || CANCELADA" },
+                        }
+                    }
+                }
+            }
+        }
     */
     const id = Number(req.params.id);
     const { status } = req.body;
@@ -57,3 +88,81 @@ export const updateAppointmentStatus = async (req: Request, res: Response) => {
     res.status(200).json(statusUpdate);
 }
 */
+
+export const rentabilidadPorEspecialidad = async (req: Request, res: Response) => {
+    /*
+        #swagger.tags = ['Reports']
+        #swagger.summary = "3.1. Rentabilidad por área"
+        #swagger.responses[200] = {
+            description: 'Lista de médicos obtenida correctamente',
+            schema: {
+                ok: true,
+                data: [
+                    {
+                    "specialty": "Cardiología",
+                    "total_appointments": 4
+                    },
+                    {
+                    "specialty": "Dermatología",
+                    "total_appointments": 3
+                    },
+                    {
+                    "specialty": "Pediatría",
+                    "total_appointments": 1
+                    }
+                ]
+            }
+        }
+    */
+    {
+
+    }
+    try {
+        const result = await getAppointmentsBySpecialty();
+        res.status(200).json({ ok: true, data: result });
+    } catch (error: any) {
+        console.error("Error al obtener rentabilidad por especialidad", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+// Corte operativo diario
+export const corteOperativoDiario = async (req: Request, res: Response) => {
+    /*
+        #swagger.tags = ['Reports']
+        #swagger.summary = "3.2. Corte operativo diario"
+    */
+    try {
+        const { date } = req.query
+        const dailyCutoff = await getDailyCutoff(date as string)
+        res.status(200).json({ ok: true, data: dailyCutoff });
+    } catch (error: any) {
+        console.error("Error al obtener el corte operativo diario", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+// Rentabilidad por área
+export function getAppointmentsBySpecialty() {
+    return prisma.$queryRaw`
+    SELECT s.name AS specialty, COUNT(a.id)::int AS total_appointments
+    FROM appointments a
+    INNER JOIN doctors d ON d.id = a.doctor_id
+    INNER JOIN specialties s ON s.id = d.specialty_id
+    GROUP BY s.name
+    ORDER BY total_appointments DESC
+  `
+}
+// Corte operativo diario
+export async function getDailyCutoff(date: string) {
+    const startOfDay = new Date(`${date}T00:00:00`)
+    const endOfDay = new Date(`${date}T23:59:59`)
+
+    return prisma.appointments.groupBy({
+        by: ['status'],
+        where: {
+            appointment_date: { gte: startOfDay, lte: endOfDay },
+            status: { in: ['COMPLETADA', 'CANCELADA'] }
+        },
+        _count: { status: true }
+    })
+}

@@ -1,4 +1,4 @@
-import { prisma, Prisma } from "../lib/prisma.js";
+import { prisma, Prisma } from "../config/prisma.js";
 
 export const DoctorModel = {
     async getAll(specialtyName?: string) {
@@ -8,7 +8,8 @@ export const DoctorModel = {
                 ? { specialties: { name: { equals: specialtyName, mode: 'insensitive' } } }
                 : undefined,
             select: {
-                specialties: true,
+                id: true,
+                specialties: { select: { name: true } },
                 users: {
                     select: {
                         name: true,

@@ -23,21 +23,14 @@ router.get('/:id', verifyToken, authorize('RECEPCIONISTA'), async (req: Request,
     const doctor = await DoctorModel.findById(doctor_id);
     res.status(200).json({ ok: true, data: doctor });
 });
+// GET	/api/doctors?specialty=Cardiología
+// Lista médicos, filtrando por especialidad si se recibe el query string
 router.get('/', verifyToken, authorize('RECEPCIONISTA'), validateGetDoctorsQuery, getAllDoctors);
-// Método	Ruta	Descripción
+// a criterio
+router.post('/', validateCreateDoctor, createDoctor);
 // GET	/api/doctors/:id/appointments?from=&to=
 // Agenda del médico, filtrable por rango de fechas — protegido con authorize('MEDICO')
 router.get('/:id/appointments', verifyToken, authorize('RECEPCIONISTA', 'MEDICO'), validateGetDoctorAppointmentsQuery, getAppointmentsByDoctor);
-// a criterio
-router.post('/', validateCreateDoctor, createDoctor);
-
-// router.get('/api/doctors/:id', (req: Request, res: Response) => {
-// const doctor = await prisma.curso.findUnique({ where: { id: 1 } });
-
-/* const barato = await prisma.curso.findFirst({
-where: { disponible: true, precio: { lt: 400 } },
-orderBy: { precio: "asc" },
-}); */
 
 
 export default router;

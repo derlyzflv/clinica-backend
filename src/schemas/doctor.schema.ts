@@ -17,14 +17,35 @@ export const getDoctorsQuerySchema = z.object({
   specialty: z.string().optional(),
 });
 
+// from: z.coerce
+//     .date({ message: "La fecha 'from' no tiene un formato válido (use YYYY-MM-DD)" })
+//     .optional(),
+//   to: z.coerce
+//     .date({ message: "La fecha 'to' no tiene un formato válido (use YYYY-MM-DD)" })
+//     .optional(),
+// }).refine((datos) => datos.to! >= datos.from!, { message: "La fecha 'to' debe ser posterior o igual a la fecha 'from'", path: ["to"] });
+
+
 export const getDoctorAppointmentsQuerySchema = z.object({
-  from: z.coerce
-    .date({ message: "La fecha 'from' no tiene un formato válido (use YYYY-MM-DD)" })
-    .optional(),
-  to: z.coerce
-    .date({ message: "La fecha 'to' no tiene un formato válido (use YYYY-MM-DD)" })
-    .optional(),
-}).refine((datos) => datos.to! >= datos.from!, { message: "La fecha 'to' debe ser posterior o igual a la fecha 'from'", path: ["to"] });
+  from: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.coerce
+      .date({ message: "La fecha 'from' no tiene un formato válido (use YYYY-MM-DD)" })
+      .optional()
+  ),
+  to: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.coerce
+      .date({ message: "La fecha 'to' no tiene un formato válido (use YYYY-MM-DD)" })
+      .optional()
+  ),
+}).refine(
+  (datos) => {
+    if (!datos.from || !datos.to) return true;
+    return datos.to >= datos.from;
+  },
+  { message: "La fecha 'to' debe ser posterior o igual a la fecha 'from'", path: ["to"] }
+);
 
 export type GetDoctorsQueryInput = z.infer<typeof getDoctorsQuerySchema>;
 
@@ -34,3 +55,10 @@ export const updateDoctorSchema = createDoctorSchema.partial();
 
 export type CreateDoctorInput = z.infer<typeof createDoctorSchema>;
 
+// from: z.coerce
+//     .date({ message: "La fecha 'from' no tiene un formato válido (use YYYY-MM-DD)" })
+//     .optional(),
+//   to: z.coerce
+//     .date({ message: "La fecha 'to' no tiene un formato válido (use YYYY-MM-DD)" })
+//     .optional(),
+// }).refine((datos) => datos.to! >= datos.from!, { message: "La fecha 'to' debe ser posterior o igual a la fecha 'from'", path: ["to"] });

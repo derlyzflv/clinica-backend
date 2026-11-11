@@ -26,6 +26,11 @@ export const appointmentStatusSchema = z.object({
 
 export type AppointmentStatusInput = z.infer<typeof appointmentStatusSchema>;
 
+export const getDailyCutoffSchema = z.object({
+  date: z
+    .coerce.date()
+})
+
 export const updateAppointmentSchema = createAppointmentSchema.partial();
 
 // Extraer el tipo de dato para TypeScript desde el schema que creamos

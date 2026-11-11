@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.routes";
 import patientRoutes from "./routes/patient.routes";
 import doctorRoutes from "./routes/doctor.routes";
 import appointmentRoutes from "./routes/appointment.routes";
+import reportRoutes from "./routes/report.routes";
 
 import swaggerUi from 'swagger-ui-express';
 
@@ -44,6 +45,11 @@ app.use("/api/doctors", doctorRoutes
     }] */
 );
 app.use("/api/appointments", appointmentRoutes
+    /* #swagger.security = [{
+        "bearerAuth": []
+    }] */
+)
+app.use("/api/reports", reportRoutes
     /* #swagger.security = [{
         "bearerAuth": []
     }] */

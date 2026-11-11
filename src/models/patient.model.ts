@@ -3,7 +3,7 @@ createPatient(data) → prisma.tuModelo.create({ data }) — Prisma devuelve el 
 getAllPatients() → prisma.tuModelo.findMany()
 getPatientById(id) → prisma.tuModelo.findUnique({ where: { id } }) — retorna null si no existe
 */
-import { prisma, Prisma } from "../lib/prisma";
+import { prisma, Prisma } from "../config/prisma";
 // Modelo para la tabla de "products"
 export const PatientModel = {
 
@@ -26,12 +26,19 @@ export const PatientModel = {
                 first_name,
                 last_name,
                 email,
-                birth_date
+                birth_date: new Date(`${birth_date}T12:00:00.000Z`),
             }
         });
         return (newPatient);
     },
     async findById(id: number) {
+        return (
+            await prisma.patients.findUnique({
+                where: { id }
+            })
+        );
+    },
+    async findAppointmentsById(id: number) {
         return (
             await prisma.patients.findUnique({
                 where: { id },

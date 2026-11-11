@@ -1,5 +1,5 @@
 // pnpm tsx prisma/seed-appointments.ts
-import { prisma } from "../src/lib/prisma.js";
+import { prisma } from "../src/config/prisma.js";
 
 async function main() {
   console.log("🌱 Iniciando seed de Pacientes y Citas (appointments)...");

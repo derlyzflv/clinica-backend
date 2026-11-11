@@ -9,7 +9,7 @@ import { PatientModel } from "../models/patient.model";
 
 export const getAllPatients = async (req: Request, res: Response) => {
     /*
-        #swagger.tags = ['Patients']
+        #swagger.tags = ['Pacientes']
         #swagger.summary = 'Listar todos los pacientes'
         #swagger.description = 'Obtiene la lista completa de pacientes registrados en la clínica.'
         #swagger.responses[200] = {
@@ -42,12 +42,9 @@ export const getAllPatients = async (req: Request, res: Response) => {
 };
 export const createPatient = async (req: Request, res: Response) => {
     /*
-        #swagger.tags = ['Patients']
-        #swagger.summary = 'Registrar un nuevo paciente'
+        #swagger.tags = ['Pacientes']
+        #swagger.summary = '1.1. Alta de pacientes'
         #swagger.description = 'Da de alta un paciente nuevo validando formato de correo y que la fecha de nacimiento no sea futura.'
-        #swagger.security = [{
-            "bearerAuth": []
-        }]
         #swagger.requestBody = {
             required: true,
             content: {
@@ -104,8 +101,8 @@ export const createPatient = async (req: Request, res: Response) => {
 };
 export const getPatientById = async (req: Request, res: Response) => {
     /*
-        #swagger.tags = ['Patients']
-        #swagger.summary = 'Obtener expediente de paciente por ID'
+        #swagger.tags = ['Pacientes']
+        #swagger.summary = '1.3. Consulta de expedientes'
         #swagger.description = 'Busca y retorna los datos personales de un paciente y el historial completo de sus citas.'
         #swagger.parameters['id'] = {
             in: 'path',
@@ -144,7 +141,7 @@ export const getPatientById = async (req: Request, res: Response) => {
         });
     }
     try {
-        const patient = await PatientModel.findById(idBuscado);
+        const patient = await PatientModel.findAppointmentsById(idBuscado);
         if (!patient) {
             return res.status(404).json({
                 mensaje: "el usuario con ese id no existe o no fue encontrado",

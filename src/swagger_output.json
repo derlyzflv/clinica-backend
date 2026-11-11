@@ -183,7 +183,7 @@
     "/api/patients/": {
       "get": {
         "tags": [
-          "Patients"
+          "Pacientes"
         ],
         "summary": "Listar todos los pacientes",
         "description": "Obtiene la lista completa de pacientes registrados en la clínica.",
@@ -304,9 +304,9 @@
       },
       "post": {
         "tags": [
-          "Patients"
+          "Pacientes"
         ],
-        "summary": "Registrar un nuevo paciente",
+        "summary": "1.1. Alta de pacientes",
         "description": "Da de alta un paciente nuevo validando formato de correo y que la fecha de nacimiento no sea futura.",
         "parameters": [
           {
@@ -452,9 +452,9 @@
     "/api/patients/{id}": {
       "get": {
         "tags": [
-          "Patients"
+          "Pacientes"
         ],
-        "summary": "Obtener expediente de paciente por ID",
+        "summary": "1.3. Consulta de expedientes",
         "description": "Busca y retorna los datos personales de un paciente y el historial completo de sus citas.",
         "parameters": [
           {
@@ -636,9 +636,9 @@
     "/api/doctors/": {
       "get": {
         "tags": [
-          "Doctors"
+          "Médicos"
         ],
-        "summary": "Listar todos los médicos o filtrar por especialidad",
+        "summary": "1.2. Búsqueda de especialistas",
         "description": "Obtiene el directorio de médicos de la clínica incluyendo sus datos de usuario y especialidad.",
         "parameters": [
           {
@@ -677,47 +677,23 @@
                         "properties": {
                           "id": {
                             "type": "number",
-                            "example": 1
-                          },
-                          "user_id": {
-                            "type": "number",
-                            "example": 2
-                          },
-                          "specialty_id": {
-                            "type": "number",
-                            "example": 1
+                            "example": 9
                           },
                           "specialties": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "number",
-                                "example": 1
-                              },
                               "name": {
                                 "type": "string",
-                                "example": "Cardiología"
+                                "example": "Pediatría"
                               }
                             }
                           },
                           "users": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "number",
-                                "example": 2
-                              },
                               "name": {
                                 "type": "string",
-                                "example": "Dr. Carlos Mendoza"
-                              },
-                              "email": {
-                                "type": "string",
-                                "example": "carlos.mendoza@clinicasalud.com"
-                              },
-                              "role": {
-                                "type": "string",
-                                "example": "MEDICO"
+                                "example": "Dr. Roberto Gómez"
                               }
                             }
                           }
@@ -745,47 +721,23 @@
                         "properties": {
                           "id": {
                             "type": "number",
-                            "example": 1
-                          },
-                          "user_id": {
-                            "type": "number",
-                            "example": 2
-                          },
-                          "specialty_id": {
-                            "type": "number",
-                            "example": 1
+                            "example": 9
                           },
                           "specialties": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "number",
-                                "example": 1
-                              },
                               "name": {
                                 "type": "string",
-                                "example": "Cardiología"
+                                "example": "Pediatría"
                               }
                             }
                           },
                           "users": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "number",
-                                "example": 2
-                              },
                               "name": {
                                 "type": "string",
-                                "example": "Dr. Carlos Mendoza"
-                              },
-                              "email": {
-                                "type": "string",
-                                "example": "carlos.mendoza@clinicasalud.com"
-                              },
-                              "role": {
-                                "type": "string",
-                                "example": "MEDICO"
+                                "example": "Dr. Roberto Gómez"
                               }
                             }
                           }
@@ -818,7 +770,7 @@
       },
       "post": {
         "tags": [
-          "Doctors"
+          "Médicos"
         ],
         "summary": "Registrar un nuevo médico",
         "description": "Asocia un usuario existente con una especialidad médica en el directorio de doctores.",
@@ -927,9 +879,9 @@
     "/api/doctors/{id}/appointments": {
       "get": {
         "tags": [
-          "Doctors"
+          "Médicos"
         ],
-        "summary": "Obtener la agenda de citas de un médico por rango de fechas",
+        "summary": "2.2. Agenda del médico",
         "description": "Lista las citas programadas para un médico específico, permitiendo filtrar opcionalmente entre dos fechas (from y to).",
         "parameters": [
           {
@@ -987,6 +939,7 @@
         "tags": [
           "Appointments"
         ],
+        "summary": "2.1. Programación de citas",
         "description": "",
         "parameters": [
           {
@@ -1049,6 +1002,7 @@
         "tags": [
           "Appointments"
         ],
+        "summary": "2.3. Gestión de estado",
         "description": "",
         "parameters": [
           {
@@ -1100,6 +1054,87 @@
             }
           }
         }
+      }
+    },
+    "/api/reports/appointments-by-specialty": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "3.1. Rentabilidad por área",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reports/daily-cutoff": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "3.2. Corte operativo diario",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

@@ -1,5 +1,5 @@
 // pnpm tsx src/script.ts
-import { prisma } from "./lib/prisma.js";
+import { prisma } from "./config/prisma.js";
 
 async function main() {
     // Example: Fetch all records from a table

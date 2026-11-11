@@ -1,6 +1,6 @@
 // pnpm tsx prisma/seed.ts
 import bcrypt from "bcryptjs";
-import { prisma } from "../src/lib/prisma.js";
+import { prisma } from "../src/config/prisma.js";
 
 async function main() {
   console.log("🌱 Iniciando seed de Clínica Salud Integral...");
