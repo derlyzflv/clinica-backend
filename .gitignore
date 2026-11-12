@@ -10,3 +10,8 @@ node_modules/
 .agents
 .claude
 .windsurf
+# seed
+prisma/seed-appointments.ts
+prisma/seed.ts
+# requerimients
+requerimientos.md
